@@ -1,6 +1,7 @@
 import sys
 from model.sort import *
 from utils.csv import readFile, writeFile
+from model.register import *
 
 # Pseudo-codigo
 # procedure main(args)
@@ -32,8 +33,13 @@ def getTime():
 Ler o .csv e devolver uma lista com o Registros
 """
 def getRegisters(path):
-    # TODO
-    return []
+    listCSV = readFile(path, True)
+    resgisters = []
+    for line in listCSV: 
+        newRegister = Register(line[0], line[1], line[2], line[3], line[4], line[5])
+        resgisters.append(newRegister)
+    #
+    return resgisters
 #
 
 """
@@ -51,7 +57,7 @@ def compareByUid(a, b):
 #
 
 def main(args):
-    if args["algIdentifier"] not in algs.keys():    # checar se o algoritmo chamado funciona
+    if args["algIdentifier"] not in algs.keys():  # checar se o algoritmo chamado funciona
         return
     #
 
