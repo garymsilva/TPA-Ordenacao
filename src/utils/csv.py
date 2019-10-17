@@ -1,9 +1,19 @@
-def readFile():
-    # TODO
-    raise NotImplementedError
+import csv
+
+def readFile(fileName, skipHeader):
+    with open(fileName, 'r') as csvfile:
+        #Skip Header
+        if skipHeader:
+            next(csvfile)
+        list = []
+        readCSV = csv.reader(csvfile, delimiter=',')
+        for row in readCSV:
+            list.append(row)
+        #
+    #
+    return list
 #
 
-def writeFile():
-    # TODO
+def writeFile(fileName):
     raise NotImplementedError
 #
