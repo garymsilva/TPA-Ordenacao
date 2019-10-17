@@ -53,9 +53,10 @@ def _merge(registers, compare, start, middle, end):
         j += 1
     #
 
-    i = j = 0
+    i = 0
+    j = 0
     k = start
-    while k < end:
+    while k < end and i < len(leftArray) and j < len(rightArray):
         if _greater(leftArray[i], rightArray[j], compare):
             registers[k] = rightArray[j]
             j += 1
@@ -64,6 +65,22 @@ def _merge(registers, compare, start, middle, end):
             i += 1
         #
         k += 1
+    #
+
+    if i == len(leftArray):
+        while j < len(rightArray):
+            registers[k] = rightArray[j]
+            j += 1
+            k += 1
+        #
+    #
+
+    if j == len(rightArray):
+        while i < len(leftArray):
+            registers[k] = leftArray[i]
+            i += 1
+            k += 1
+        #
     #
 #
 
@@ -78,7 +95,6 @@ def _mergeSort(registers, compare, start, end):
 
 def mergeSort(registers, compare=_defaultCompare):
     _mergeSort(registers, compare, 0, len(registers)-1)
-    return registers
 #
 
 """ 2.4. Quick Sort """
