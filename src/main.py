@@ -1,7 +1,8 @@
-import sys
-from model.sort import *
+import sys, os, time
+from pathlib import Path
+from model.sort import sortMethodsSet
 from utils.csv import readFile, writeFile
-from model.register import *
+from model.register import Register
 
 # Pseudo-codigo
 # procedure main(args)
@@ -16,17 +17,10 @@ from model.register import *
 #     reportTime(A, initTime, finishTime)
 # end procedure
 
-algs = {
-    "selectsort": selectionSort,
-    "insertsort": insertionSort,
-    "mergesort": mergeSort,
-    "quicksort": quickSort,
-    "heapsort": heapSort
-}
+algorithms = sortMethodsSet # conjunto de funções, importado do módulo "sort.py"
 
 def getTime():
-    # TODO
-    return 0
+    return int(time.time() * 1000)
 #
 
 """ 
