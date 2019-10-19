@@ -23,6 +23,13 @@ def _greater(left, right, compare=_defaultCompare):
     #
 #
 
+# Permuta os elementos i e j de um array
+def _exchange(array, i, j):
+    aux = array[i]
+    array[i] = array[j]
+    array[j] = aux
+#
+
 """ 2. Funções de ordenação """
 # Todas as funções irão usar o _defaultCompare se não for passada outra função.
 
@@ -106,8 +113,31 @@ def mergeSort(registers, compare=_defaultCompare):
 #
 
 """ 2.4. Quick Sort """
+def _partition(registers, compare, start, end):
+    pivot = registers[end]
+    i = start - 1
+
+    for j in range(start, end):
+        if not _greater(registers[j], pivot, compare):
+            i += 1
+            _exchange(registers, i, j)
+        #
+    #
+    _exchange(registers, i+1, end)
+
+    return i + 1
+#
+
+def _quickSort(registers, compare, start, end):
+    if start < end:
+        middle = _partition(registers, compare, start, end)
+        _quickSort(registers, compare, start, middle - 1)
+        _quickSort(registers, compare, middle + 1, end)
+    #
+#
+
 def quickSort(registers, compare=_defaultCompare):
-    raise NotImplementedError
+    _quickSort(registers, compare, 0, len(registers)-1)
 #
 
 """ 2.5. Heap Sort """
