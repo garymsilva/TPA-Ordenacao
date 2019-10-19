@@ -23,6 +23,15 @@ def _greater(left, right, compare=_defaultCompare):
     #
 #
 
+# Diz se left é MENOR QUE right, baseado em uma função de comparação fornecida. Usa _defaultCompare se não for passada outra função.
+def _less(left, right, compare=_defaultCompare):
+    if (compare(left, right) < 0):
+        return True
+    else:
+        return False
+    #
+#
+
 # Permuta os elementos i e j de um array
 def _exchange(array, i, j):
     aux = array[i]
@@ -35,7 +44,21 @@ def _exchange(array, i, j):
 
 """ 2.1. Selection Sort """
 def selectionSort(registers, compare=_defaultCompare):
-    raise NotImplementedError
+    start = 0
+    n = len(registers)
+    end = n - 1
+
+    print(str(start), str(n), str(end))
+
+    for i in range(start, end):
+        smallestIndex = i
+        for j in range(i+1, n):
+            if _less(registers[j], registers[smallestIndex], compare):
+                smallestIndex = j
+            #
+        #
+        _exchange(registers, i, smallestIndex)
+    #
 #
 
 """ 2.2. Insertion Sort """
