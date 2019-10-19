@@ -33,7 +33,15 @@ def selectionSort(registers, compare=_defaultCompare):
 
 """ 2.2. Insertion Sort """
 def insertionSort(registers, compare=_defaultCompare):
-    raise NotImplementedError
+    for j in range(1, len(registers)):
+        key = registers[j]
+        i = j - 1
+        while i >= 0 and _greater(registers[i], key, compare):
+            registers[i+1] = registers[i]
+            i -= 1
+        #
+        registers[i+1] = key
+    #
 #
 
 """ 2.3. Merge Sort """
