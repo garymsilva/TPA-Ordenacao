@@ -14,6 +14,9 @@ def readFile(fileName, skipHeader):
     return list
 #
 
-def writeFile(fileName):
-    raise NotImplementedError
+def writeFile(fileName, rowData):
+    with open(fileName, 'a', newline='') as csvFile:
+        writer = csv.writer(csvFile, delimiter=',')
+        writer.writerow(rowData)
+    #
 #

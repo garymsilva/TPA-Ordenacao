@@ -1,4 +1,5 @@
 import sys, os, time
+from datetime import datetime
 from pathlib import Path
 from model.sort import sortMethodsSet
 from utils.csv import readFile, writeFile
@@ -20,27 +21,40 @@ from model.register import Register
 algorithms = sortMethodsSet # conjunto de funções, importado do módulo "sort.py"
 
 def getTime():
-    return int(time.time() * 1000)
+    return time.time() * 1000
 #
 
-""" 
-Ler o .csv e devolver uma lista com o Registros
+"""
+Ler o .csv e devolver uma lista com os Registros
 """
 def getRegisters(path):
     listCSV = readFile(path, True)
-    resgisters = []
+    registers = []
     for line in listCSV: 
         newRegister = Register(line[0], line[1], line[2], line[3], line[4], line[5])
-        resgisters.append(newRegister)
+        registers.append(newRegister)
     #
-    return resgisters
+    return registers
+#
+
+def getFiles(path):
+    p = Path(path)
+    files = os.listdir(p)
+    return files
+#
+
+"""
+Registra um resultado nos logs
+"""
+def updateLog(algorithm, n, time):
+    writeFile("results.csv", [str(datetime.now()), algorithm, str(n), str(time)])
+    # print(algorithm, str(n)+" registros", str(time)+"ms")
 #
 
 """
 Função de comparação que vamos passar nos métodos de ordenação
 """
 def compareByUid(a, b):
-    # TODO
     if a.uid > b.uid:           # se a > b retorna 1
         return 1
     elif a.uid == b.uid:        # se for igual, retorna 0
@@ -50,26 +64,69 @@ def compareByUid(a, b):
     #
 #
 
+""" Executa UM teste, para UM algoritmo, com UM conjunto de arquivos """
+def runTest(sort, file):
+    registers = getRegisters(file)
+    start = getTime()
+    sort(registers, compareByUid)
+    end = getTime()
+    return registers, start, end
+#
+
 def main(args):
-    if args["algIdentifier"] not in algs.keys():  # checar se o algoritmo chamado funciona
-        return
+    # registers = getRegisters("data/data_10e0.csv")
+    # registers = [10, 56, 2, 34, 12, 9, 3, 43, 11, 6]
+    # registers = [10, 56, 2, 34, 12, 9, 3, 43, 11, 6]
+    
+    if args["algIdentifier"] in algorithms.keys():
+        print("Running", args["algIdentifier"])
+        sort = algorithms[args["algIdentifier"]]
+        registers, startTime, endTime = runTest(sort, args["inputFile"])
+        updateLog(args["algIdentifier"], len(registers), endTime-startTime)
+        
+        for reg in registers:
+            print(str(reg.uid))
+        #
     #
 
-    registersList = getRegisters("caminho/do/arquivo.csv") # Lê o arquivo
-
-    sort = algs[args["algIdentifier"]]  # sort recebe a função que o usuário escolheu no terminal
+    if args["algIdentifier"] == "all":
+        for alg in algorithms.keys():
+            sort = algorithms[alg]
+            for fileName in getFiles(args["directory"]):
+                for i in range(0, 5):
+                    print("Running", alg, fileName)
+                    registers, startTime, endTime = runTest(sort, args["directory"]+"/"+fileName)
+                    updateLog(alg, len(registers), endTime-startTime)
+                #
+            #
+        #
+    #
     
-    initTime = getTime()
-    result = sort(registersList, compareByUid)   # chama sort(), passando a lista de registros e o método de comparação
-    endTime = getTime()
-    
-    # TODO: print do resultado
     return
 #
 
 if __name__ == "__main__":
-    args = {
-        "algIdentifier": sys.argv[1] # pega o primeiro parâmetro passado no terminal. Ex: python main.py insertsort
-    }
+    # Default values
+    args = {}
+
+    # Update args with user input
+    lenArgs = len(sys.argv)
+    
+    if lenArgs >= 2:
+        args["algIdentifier"] = str(sys.argv[1]) # pega o primeiro parâmetro passado no terminal. Ex: python main.py insertsort
+    #
+
+    if "-d" in sys.argv:
+        dirIndex = sys.argv.index("-d") + 1
+        args["directory"] = str(sys.argv[dirIndex])
+    else:
+        args["directory"] = "data"
+    #
+
+    if "-i" in sys.argv:
+        fileIndex = sys.argv.index("-i") + 1
+        args["inputFile"] = str(sys.argv[fileIndex])
+    #
+    
     main(args)
 #

@@ -48,8 +48,6 @@ def selectionSort(registers, compare=_defaultCompare):
     n = len(registers)
     end = n - 1
 
-    print(str(start), str(n), str(end))
-
     for i in range(start, end):
         smallestIndex = i
         for j in range(i+1, n):
