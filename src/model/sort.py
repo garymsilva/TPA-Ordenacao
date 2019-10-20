@@ -164,8 +164,58 @@ def quickSort(registers, compare=_defaultCompare):
 #
 
 """ 2.5. Heap Sort """
+def _parent(i):
+    return (i-1)//2
+#
+
+def _left(i):
+    return 2*(i+1)-1
+#
+
+def _right(i):
+    return 2*(i+1)
+#
+
+def _maxHeapify(registers, compare, i=0, heapSize=None):
+    left = _left(i)
+    right = _right(i)
+    largest = 0
+
+    if heapSize == None:
+        heapSize = len(registers)
+    #
+
+    if left < heapSize and _greater(registers[left], registers[i], compare):
+        largest = left
+    else:
+        largest = i
+    #
+
+    if right < heapSize and _greater(registers[right], registers[largest], compare):
+        largest = right
+    #
+
+    if largest != i:
+        _exchange(registers, i, largest)
+        _maxHeapify(registers, compare, largest, heapSize)
+    #
+#
+
+def _buildMaxHeap(registers, compare):
+    for i in range((len(registers)-1)//2, -1, -1):
+        _maxHeapify(registers, compare, i)
+    #
+#
+
 def heapSort(registers, compare=_defaultCompare):
-    raise NotImplementedError
+    _buildMaxHeap(registers, compare)
+    heapSize = len(registers)
+
+    for i in range(len(registers)-1, 0, -1):
+        _exchange(registers, 0, i)
+        heapSize -= 1
+        _maxHeapify(registers, compare, 0, heapSize)
+    #
 #
 
 def introSort(registers, compare=_defaultCompare):
