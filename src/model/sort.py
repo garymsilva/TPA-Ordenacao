@@ -8,7 +8,7 @@ compare: function(a, b)
 """
 
 """ 1. Funções acessórias """
-
+import math
 # Comparador padrão para inteiros
 def _defaultCompare(a, b):
     return a-b
@@ -60,7 +60,7 @@ def selectionSort(registers, compare=_defaultCompare):
 #
 
 """ 2.2. Insertion Sort """
-def insertionSort(registers, compare=_defaultCompare):
+def _insertionSort(registers, start, end, compare=_defaultCompare):
     for j in range(1, len(registers)):
         key = registers[j]
         i = j - 1
@@ -70,6 +70,10 @@ def insertionSort(registers, compare=_defaultCompare):
         #
         registers[i+1] = key
     #
+#
+
+def insertionSort(registers, compare=_defaultCompare):
+    _insertionSort(registers, 1, len(registers), compare)
 #
 
 """ 2.3. Merge Sort """
@@ -216,12 +220,48 @@ def heapSort(registers, compare=_defaultCompare):
     #
 #
 
-def introSort(registers, compare=_defaultCompare):
-    raise NotImplementedError
+def _introSort(registers, limit, compare=_defaultCompare):
+    registerSize =  len(registers)
+    pivot = _partition(registers, compare, 0, len(registers)-1)
+
+    if registerSize > 1:
+        if pivot > limit:
+            heapSort(registers,compare)
+        else:
+            _introSort(registers[0:pivot-1], limit - 1, compare)
+            _introSort(registers[pivot+1:], limit - 1, compare)
+        #
+    #
 #
 
+def introSort(registers, compare=_defaultCompare):
+    limit = math.log(len(registers),2)
+    _introSort(registers, limit, compare )
+#
+
+
+
 def timSort(registers, compare=_defaultCompare):
-    raise NotImplementedError
+    RUN = 64
+    registersSize = len(registers)
+    i = 0
+    while (i < registersSize):
+        _insertionSort(registers, i, min(registersSize, RUN), compare)
+        i+=RUN
+    #
+    size = RUN
+    while (size < registersSize):
+        left =  size - 1
+        while (left < registersSize):
+            mid = min((left + registersSize - 1), (registersSize-1))
+        
+            right = min((left + 2*size - 1), (registersSize-1))
+            _merge(registers, compare, left, mid, right)
+
+            left+= 2 * size
+        #
+        size= size * 2
+    #
 #
 
 def smoothSort(registers, compare=_defaultCompare):
@@ -237,5 +277,7 @@ sortMethodsSet = {
     "insertsort": insertionSort,
     "mergesort": mergeSort,
     "quicksort": quickSort,
-    "heapsort": heapSort
+    "heapsort": heapSort,
+    "introsort":introSort,
+    "timsort": timSort
 }
