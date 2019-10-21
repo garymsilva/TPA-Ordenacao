@@ -1,8 +1,10 @@
 import sys, os, time
+from multiprocessing import Process
 from datetime import datetime
 from pathlib import Path
 from model.sort import sortMethodsSet
 from utils.csv import readFile, writeFile
+from utils.timeout import timeout
 from model.register import Register
 
 # Pseudo-codigo
@@ -65,6 +67,7 @@ def compareByUid(a, b):
 #
 
 """ Executa UM teste, para UM algoritmo, com UM conjunto de arquivos """
+@timeout(15*60)
 def runTest(sort, file):
     registers = getRegisters(file)
     start = getTime()
@@ -78,14 +81,32 @@ def main(args):
     # registers = [10, 56, 2, 34, 12, 9, 3, 43, 11, 6]
     # registers = [10, 56, 2, 34, 12, 9, 3, 43, 11, 6]
     
-    if args["algIdentifier"] in algorithms.keys():
-        print("Running", args["algIdentifier"])
-        sort = algorithms[args["algIdentifier"]]
-        registers, startTime, endTime = runTest(sort, args["inputFile"])
-        updateLog(args["algIdentifier"], len(registers), endTime-startTime)
+
+
+    # if args["algIdentifier"] in algorithms.keys():
+    #     print("Running", args["algIdentifier"])
+    #     sort = algorithms[args["algIdentifier"]]
+    #     registers, startTime, endTime = runTest(sort, args["inputFile"])
+    #     updateLog(args["algIdentifier"], len(registers), endTime-startTime)
         
-        for reg in registers:
-            print(str(reg.uid))
+    #     for reg in registers:
+    #         print(str(reg.uid))
+    #     #
+    # #
+
+    if args["algIdentifier"] in algorithms.keys():
+        sort = algorithms[args["algIdentifier"]]
+        for fileName in getFiles(args["directory"]):
+            for i in range(0, 5):
+                print("Running", args["algIdentifier"], fileName)
+                try:
+                    registers, startTime, endTime = runTest(sort, args["directory"]+"/"+fileName)
+                    updateLog(args["algIdentifier"], len(registers), endTime-startTime)
+                except Exception as e:
+                    print("Timeout:", args["algIdentifier"], len(registers))
+                    updateLog(args["algIdentifier"], len(registers), -1)
+                #
+            #
         #
     #
 
@@ -95,8 +116,13 @@ def main(args):
             for fileName in getFiles(args["directory"]):
                 for i in range(0, 5):
                     print("Running", alg, fileName)
-                    registers, startTime, endTime = runTest(sort, args["directory"]+"/"+fileName)
-                    updateLog(alg, len(registers), endTime-startTime)
+                    try:
+                        registers, startTime, endTime = runTest(sort, args["directory"]+"/"+fileName)
+                        updateLog(alg, len(registers), endTime-startTime)
+                    except Exception as e:
+                        print("Timeout:", alg, len(registers))
+                        updateLog(alg, len(registers), -1)
+                    #
                 #
             #
         #

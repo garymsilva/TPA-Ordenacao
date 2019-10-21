@@ -1,3 +1,5 @@
+import math
+
 """
 registers: list
 compare: function(a, b)
@@ -8,7 +10,6 @@ compare: function(a, b)
 """
 
 """ 1. Funções acessórias """
-import math
 # Comparador padrão para inteiros
 def _defaultCompare(a, b):
     return a-b
@@ -61,7 +62,7 @@ def selectionSort(registers, compare=_defaultCompare):
 
 """ 2.2. Insertion Sort """
 def _insertionSort(registers, start, end, compare=_defaultCompare):
-    for j in range(1, len(registers)):
+    for j in range(start, end):
         key = registers[j]
         i = j - 1
         while i >= 0 and _greater(registers[i], key, compare):
@@ -220,6 +221,7 @@ def heapSort(registers, compare=_defaultCompare):
     #
 #
 
+""" 2.6. Intro Sort """
 def _introSort(registers, limit, compare=_defaultCompare):
     registerSize =  len(registers)
     pivot = _partition(registers, compare, 0, len(registers)-1)
@@ -239,8 +241,7 @@ def introSort(registers, compare=_defaultCompare):
     _introSort(registers, limit, compare )
 #
 
-
-
+""" 2.7. Tim Sort """
 def timSort(registers, compare=_defaultCompare):
     RUN = 64
     registersSize = len(registers)
@@ -278,6 +279,6 @@ sortMethodsSet = {
     "mergesort": mergeSort,
     "quicksort": quickSort,
     "heapsort": heapSort,
-    "introsort":introSort,
+    "introsort": introSort,
     "timsort": timSort
 }
